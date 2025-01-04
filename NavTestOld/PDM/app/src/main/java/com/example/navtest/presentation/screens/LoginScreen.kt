@@ -14,27 +14,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.navtest.presentation.navigation.Destinations
+import com.example.navtest.presentation.viewmodel.LoginViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel = viewModel()) {
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
 
-    val auth = FirebaseAuth.getInstance()
+    val loginResult = remember { mutableStateOf<Pair<Boolean,String>>(false to "")}
 
-    fun loginUser(email: String, password: String) {
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-
-                    Toast.makeText(navController.context, "Login bem-sucedido", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(navController.context, "Falha no login: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
+    fun onLoginResult(success:Boolean, message:String){
+        loginResult.value = success to message
+        if(success){
+            navController.navigate(Destinations.Products.route)
+        }else{
+            Toast.makeText(navController.context,message,Toast.LENGTH_SHORT).show()
+        }
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
@@ -64,7 +63,7 @@ fun LoginScreen(navController: NavController) {
         )
 
         // Botão de Login
-        Button(onClick = { loginUser(email.value,password.value)
+        Button(onClick = { loginViewModel.loginUser(email.value,password.value, ::onLoginResult)
 
         }) {
             Text("Iniciar Sessão")

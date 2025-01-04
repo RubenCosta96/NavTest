@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.navtest.presentation.screens.LoginScreen
+import com.example.navtest.presentation.screens.ProductScreen
 import com.example.navtest.presentation.screens.RegisterScreen
 
 
@@ -14,5 +15,6 @@ fun AppNavigation() {
     NavHost(navController = navController, startDestination = Destinations.Login.route) {
         composable(Destinations.Login.route) { LoginScreen(navController) }
         composable(Destinations.Register.route) { RegisterScreen(navController) }
+        composable(Destinations.Products.route) { ProductScreen(navController)}
     }
 }
