@@ -1,6 +1,7 @@
 package com.example.navtest.presentation.navigation
 
 import AuthViewModel
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -17,8 +18,8 @@ import com.example.navtest.presentation.screens.RegisterScreen
 fun AppNavigation() {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = viewModel()
-
-    val userId = authViewModel.getUserId().value
+    val userId by authViewModel.userId.observeAsState()
+    Log.d("AppNavigationDebug", "userId obtido: $userId")
 
     if(userId !=null){
         NavHost(navController = navController, startDestination = Destinations.Login.route) {

@@ -1,5 +1,6 @@
 package com.example.navtest.presentation.screens
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,8 @@ import com.example.navtest.presentation.viewmodel.CartViewModel
 fun ProductScreen(navController: NavController, userId: String) {
     val products = listOf("Produto 1", "Produto 2", "Produto 3") // Exemplo de dados
     val cartViewModel: CartViewModel = hiltViewModel() // Aceder ao carrinho
+
+    Log.d("ProductScreenDebug", "userId recebido: $userId")
 
     LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         items(products) { product ->

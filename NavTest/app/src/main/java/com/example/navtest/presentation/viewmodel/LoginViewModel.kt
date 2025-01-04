@@ -18,8 +18,6 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     val loginState: State<LoginState> get() = _loginState
 
     private val auth = FirebaseAuth.getInstance()
-
-    // Função de login
     fun loginUser(email: String, password: String) {
         _loginState.value = LoginState.Loading
 
@@ -30,7 +28,6 @@ class LoginViewModel @Inject constructor() : ViewModel() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    // Adiciona um log quando o login for bem-sucedido
                     Log.d("AuthDebug", "Login bem-sucedido! User ID: ${user?.uid}")
                     _loginState.value = LoginState.Success(user)
                 } else {
