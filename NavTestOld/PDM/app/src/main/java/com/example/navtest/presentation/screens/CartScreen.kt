@@ -17,6 +17,10 @@ import com.example.navtest.presentation.viewmodel.CartViewModel
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import coil.compose.AsyncImage
@@ -26,7 +30,7 @@ import com.example.navtest.domain.model.Product
 
 @Composable
 fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
-    val cartItems = cartViewModel.cartItems
+    val cartItems by remember { mutableStateOf(cartViewModel.cartItems)}
 
     Column(
         modifier = Modifier
