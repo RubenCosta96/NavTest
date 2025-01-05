@@ -22,9 +22,6 @@ import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel = viewModel()) {
-    val email = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
-
     val loginResult = remember { mutableStateOf<Pair<Boolean,String>>(false to "")}
 
     fun onLoginResult(success:Boolean, message:String){
@@ -40,8 +37,8 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel = v
         Text(text = "Iniciar Sessão")
 
         TextField(
-            value = email.value,
-            onValueChange = { email.value = it },
+            value = loginViewModel.email.value,
+            onValueChange = { loginViewModel.email.value = it },
             label = { Text("Email") },
             modifier = Modifier.padding(bottom = 8.dp),
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -50,8 +47,8 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel = v
         )
 
         TextField(
-            value = password.value,
-            onValueChange = { password.value = it },
+            value = loginViewModel.password.value,
+            onValueChange = { loginViewModel.password.value = it },
             label = { Text("Senha") },
             modifier = Modifier.padding(bottom = 16.dp),
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -61,13 +58,12 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel = v
         )
 
         // Botão de Login
-        Button(onClick = { loginViewModel.loginUser(email.value,password.value, ::onLoginResult)
+        Button(onClick = { loginViewModel.loginUser(::onLoginResult)
 
         }) {
             Text("Iniciar Sessão")
         }
 
-        // Navegação para a tela de Registo
         Button(
             onClick = { navController.navigate(Destinations.Register.route) },
             modifier = Modifier.padding(top = 8.dp)

@@ -1,14 +1,17 @@
 package com.example.navtest.presentation.viewmodel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.navtest.domain.model.Product
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class ProductViewModel : ViewModel() {
 
     private val db = FirebaseFirestore.getInstance()
-    val productsLiveData = MutableLiveData<List<Product>>()
+
+    private val _productsFlow = MutableStateFlow<List<Product>>(emptyList())
+    val productsFlow: StateFlow<List<Product>> = _productsFlow
 
     init {
         listenForProductChanges()
@@ -27,7 +30,7 @@ class ProductViewModel : ViewModel() {
                 val product = document.toObject(Product::class.java)
                 product?.let { productList.add(it) }
             }
-            productsLiveData.value = productList
+            _productsFlow.value = productList
         }
     }
 }

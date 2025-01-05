@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -36,7 +37,7 @@ fun ProductScreen(navController: NavController, cartViewModel: CartViewModel = v
     }
 
     if(currentUser != null) {
-        val products by productViewModel.productsLiveData.observeAsState(emptyList())
+        val products by productViewModel.productsFlow.collectAsState()
 
         Column(
             modifier = Modifier
