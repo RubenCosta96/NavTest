@@ -31,6 +31,7 @@ import com.example.navtest.domain.model.Product
 @Composable
 fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
     val cartItems by remember { mutableStateOf(cartViewModel.cartItems)}
+    val total = cartViewModel.calculateTotal()
 
     Column(
         modifier = Modifier
@@ -52,16 +53,24 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
                 items(cartItems) { product ->
                     CartItem(product, cartViewModel)
                 }
+                item {
+                    Text(
+                        text = "Total: ${"%.2f".format(total)} €",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                item {
+                    Button(
+                        onClick = { navController.popBackStack() },
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .align(Alignment.CenterHorizontally)
+                    ) {
+                        Text("Voltar")
+                    }
+                }
             }
-        }
-
-        Button(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .align(Alignment.CenterHorizontally)
-        ) {
-            Text("Voltar")
         }
     }
 }
@@ -115,5 +124,6 @@ fun CartItem(cartProduct: CartProduct, cartViewModel: CartViewModel) {
                 Text("+")
             }
         }
+
     }
 }

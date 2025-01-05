@@ -21,18 +21,16 @@ class CartViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
 
     init {
-        // Ouvindo mudanças no estado de autenticação
         auth.addAuthStateListener { firebaseAuth ->
             val userId = firebaseAuth.currentUser?.uid
             if (userId != null) {
-                loadCart(userId)  // Carregar o carrinho para o utilizador autenticado
+                loadCart(userId)  // Carregar o carrinho caso o utilizador esteja autenticado
             } else {
-                _cartItems.clear()  // Limpar o carrinho se o utilizador não estiver autenticado
+                _cartItems.clear()  // Limpar o carrinho caso o utilizador não esteja autenticado
             }
         }
     }
 
-    // Carregar o carrinho baseado no userId
     private fun loadCart(userId: String) {
         val cartRef = db.collection("carts").document(userId)
 
@@ -45,7 +43,6 @@ class CartViewModel : ViewModel() {
                         _cartItems.clear()
                         cartItemsList.forEach { cartItem ->
 
-                            // Procurar produto pela string 'productId' que é o nome do produto
                             db.collection("product")
                                 .whereEqualTo("name", cartItem.productId)
                                 .get()
@@ -56,7 +53,6 @@ class CartViewModel : ViewModel() {
                                             _cartItems.add(CartProduct(product, cartItem.quantity))
                                         }
                                     } else {
-                                        // Usar um log de nível warning em vez de erro
                                         Log.w("CartViewModel", "Produto não encontrado com nome: ${cartItem.productId}")
                                     }
                                 }
@@ -74,9 +70,6 @@ class CartViewModel : ViewModel() {
             }
     }
 
-
-
-    // Adicionar produto ao carrinho
     fun addToCart(product: Product) {
         val existingProduct = _cartItems.find { it.product.name == product.name }
         if (existingProduct != null) {
@@ -87,27 +80,22 @@ class CartViewModel : ViewModel() {
         saveCart()
     }
 
-    // Aumentar a quantidade de um produto
     fun increaseQuantity(cartProduct: CartProduct) {
         val updatedProduct = cartProduct.copy(quantity = cartProduct.quantity + 1)
         _cartItems[_cartItems.indexOf(cartProduct)] = updatedProduct
         saveCart()
     }
 
-    // Diminuir a quantidade de um produto
     fun decreaseQuantity(cartProduct: CartProduct) {
         if (cartProduct.quantity > 1) {
             val updatedProduct = cartProduct.copy(quantity = cartProduct.quantity - 1)
             _cartItems[_cartItems.indexOf(cartProduct)] = updatedProduct
         } else {
-            // Se a quantidade for 1, remove o produto
             _cartItems.remove(cartProduct)
         }
         saveCart()
     }
 
-
-    // Salvar o carrinho no Firestore
     private fun saveCart() {
         val userId = auth.currentUser?.uid ?: return
         val cartRef = db.collection("carts").document(userId)
@@ -121,4 +109,9 @@ class CartViewModel : ViewModel() {
                 Log.w("CartViewModel", "Erro ao salvar carrinho", e)
             }
     }
+
+    fun calculateTotal(): Double {
+        return _cartItems.sumOf { it.product.price * it.quantity }
+    }
+
 }
