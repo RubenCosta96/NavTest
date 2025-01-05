@@ -63,6 +63,16 @@ fun ProductScreen(navController: NavController, cartViewModel: CartViewModel = v
                     ProductItem(product, cartViewModel)
                 }
             }
+            item {
+                Button(
+                    onClick = {
+                        navController.navigate(Destinations.Cart.route)
+                    },
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text("Ver Carrinho")
+                }
+            }
 
             item {
                 Button(
@@ -87,7 +97,6 @@ fun ProductItem(product: Product, cartViewModel: CartViewModel) {
             .padding(bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Imagem do produto
         AsyncImage(
             model = product.image,
             contentDescription = "Imagem do produto",
@@ -108,8 +117,8 @@ fun ProductItem(product: Product, cartViewModel: CartViewModel) {
                 text = "Preço: ${product.price} €",
                 style = MaterialTheme.typography.bodyMedium
             )
-        }
 
+        }
         Button(
             onClick = { cartViewModel.addToCart(product) },
             modifier = Modifier.padding(start = 8.dp)
