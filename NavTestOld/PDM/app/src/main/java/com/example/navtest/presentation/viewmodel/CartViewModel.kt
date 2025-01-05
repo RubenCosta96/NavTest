@@ -56,9 +56,9 @@ class CartViewModel : ViewModel() {
                         cartItemsList.forEach { cartItem ->
                             Log.d("CartViewModel", "A carregar produto com ID: ${cartItem.productId}")
 
-                            // Agora, buscamos pelo campo 'productId' no documento
-                            db.collection("products")
-                                .whereEqualTo("productName", cartItem.productId)  // Supondo que o campo que guarda o nome do produto seja 'productName'
+                            // Procurar produto pela string 'productId' que é o nome do produto
+                            db.collection("product")
+                                .whereEqualTo("name", cartItem.productId)  // Supondo que 'name' é o campo do nome do produto
                                 .get()
                                 .addOnSuccessListener { querySnapshot ->
                                     if (!querySnapshot.isEmpty) {
@@ -66,13 +66,15 @@ class CartViewModel : ViewModel() {
                                         if (product != null) {
                                             Log.d("CartViewModel", "Produto encontrado: ${product.name}")
                                             _cartItems.add(CartProduct(product, cartItem.quantity))
+                                        } else {
+                                            Log.e("CartViewModel", "Produto não encontrado com nome: ${cartItem.productId}")
                                         }
                                     } else {
                                         Log.e("CartViewModel", "Produto não encontrado com nome: ${cartItem.productId}")
                                     }
                                 }
                                 .addOnFailureListener { e ->
-                                    Log.e("CartViewModel", "Erro ao carregar produto com ID: ${cartItem.productId}, Erro: ${e.message}")
+                                    Log.e("CartViewModel", "Erro ao carregar produto com nome: ${cartItem.productId}, Erro: ${e.message}")
                                 }
                         }
                     } ?: Log.e("CartViewModel", "Carrinho não contém produtos.")
@@ -85,6 +87,7 @@ class CartViewModel : ViewModel() {
                 Log.e("CartViewModel", "Erro ao carregar o carrinho para o utilizador: $userId, Erro: ${e.message}")
             }
     }
+
 
 
 
