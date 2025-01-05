@@ -10,9 +10,9 @@ import com.example.navtest.presentation.screens.RegisterScreen
 
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(startDestination: String) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Destinations.Login.route) {
+    NavHost(navController = navController, startDestination = startDestination) {
         composable(Destinations.Login.route) { LoginScreen(navController) }
         composable(Destinations.Register.route) { RegisterScreen(navController) }
         composable(Destinations.Products.route) { ProductScreen(navController)}

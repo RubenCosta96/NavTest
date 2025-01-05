@@ -39,7 +39,6 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel = v
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = "Iniciar Sessão")
 
-        // Campo de Email
         TextField(
             value = email.value,
             onValueChange = { email.value = it },
@@ -50,7 +49,6 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel = v
             )
         )
 
-        // Campo de Senha
         TextField(
             value = password.value,
             onValueChange = { password.value = it },
