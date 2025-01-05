@@ -21,65 +21,51 @@ class CartViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
 
     init {
-        // Chama loadCart quando o utilizador for alterado
+        // Ouvindo mudanças no estado de autenticação
         auth.addAuthStateListener { firebaseAuth ->
             val userId = firebaseAuth.currentUser?.uid
             if (userId != null) {
-                loadCart(userId)  // Recarregar o carrinho para o novo utilizador
+                loadCart(userId)  // Carregar o carrinho para o utilizador autenticado
             } else {
-                _cartItems.clear()  // Se não estiver autenticado, limpa os itens
+                _cartItems.clear()  // Limpar o carrinho se o utilizador não estiver autenticado
             }
-        }
-
-        val currentUserId = auth.currentUser?.uid
-        currentUserId?.let {
-            loadCart(it) // Carregar o carrinho do utilizador atual ao iniciar o ViewModel
         }
     }
 
     // Carregar o carrinho baseado no userId
     private fun loadCart(userId: String) {
-        Log.d("CartViewModel", "A carregar o carrinho para o utilizador: $userId")
-
         val cartRef = db.collection("carts").document(userId)
 
         cartRef.get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
-                    Log.d("CartViewModel", "Carrinho encontrado para o utilizador: $userId")
-
                     val cart = document.toObject(CartData::class.java)
                     cart?.products?.let { cartItemsList ->
-                        Log.d("CartViewModel", "Produtos no carrinho: ${cartItemsList.size}")
 
                         _cartItems.clear()
                         cartItemsList.forEach { cartItem ->
-                            Log.d("CartViewModel", "A carregar produto com ID: ${cartItem.productId}")
 
                             // Procurar produto pela string 'productId' que é o nome do produto
                             db.collection("product")
-                                .whereEqualTo("name", cartItem.productId)  // Supondo que 'name' é o campo do nome do produto
+                                .whereEqualTo("name", cartItem.productId)
                                 .get()
                                 .addOnSuccessListener { querySnapshot ->
                                     if (!querySnapshot.isEmpty) {
                                         val product = querySnapshot.documents[0].toObject(Product::class.java)
                                         if (product != null) {
-                                            Log.d("CartViewModel", "Produto encontrado: ${product.name}")
                                             _cartItems.add(CartProduct(product, cartItem.quantity))
-                                        } else {
-                                            Log.e("CartViewModel", "Produto não encontrado com nome: ${cartItem.productId}")
                                         }
                                     } else {
-                                        Log.e("CartViewModel", "Produto não encontrado com nome: ${cartItem.productId}")
+                                        // Usar um log de nível warning em vez de erro
+                                        Log.w("CartViewModel", "Produto não encontrado com nome: ${cartItem.productId}")
                                     }
                                 }
                                 .addOnFailureListener { e ->
                                     Log.e("CartViewModel", "Erro ao carregar produto com nome: ${cartItem.productId}, Erro: ${e.message}")
                                 }
                         }
-                    } ?: Log.e("CartViewModel", "Carrinho não contém produtos.")
+                    }
                 } else {
-                    Log.d("CartViewModel", "Carrinho vazio para o utilizador: $userId")
                     _cartItems.clear()
                 }
             }
@@ -87,7 +73,6 @@ class CartViewModel : ViewModel() {
                 Log.e("CartViewModel", "Erro ao carregar o carrinho para o utilizador: $userId, Erro: ${e.message}")
             }
     }
-
 
 
 
