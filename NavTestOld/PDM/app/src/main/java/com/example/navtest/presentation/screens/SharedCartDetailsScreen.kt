@@ -48,16 +48,16 @@ fun SharedCartDetailsScreen(cartId: String, navController: NavController, cartVi
                 val cartData = document.toObject(CartData::class.java)
                 cart.value = cartData
 
-                val productNames = cartData?.products?.map { it.productId } ?: emptyList()  // Mudei para buscar pelos nomes
+                val productNames = cartData?.products?.map { it.productId } ?: emptyList()
                 productNames.forEach { productName ->
-                    db.collection("product")  // Atualiza para a coleção "product"
-                        .whereEqualTo("name", productName)  // Buscando pelo nome do produto
+                    db.collection("product")
+                        .whereEqualTo("name", productName)
                         .get()
                         .addOnSuccessListener { productQuerySnapshot ->
                             if (!productQuerySnapshot.isEmpty) {
                                 val product = productQuerySnapshot.documents[0].toObject(Product::class.java)
                                 product?.let {
-                                    productsDetails.value = productsDetails.value + (productName to it)
+                                    productsDetails.value += (productName to it)
                                 }
                             }
                         }
