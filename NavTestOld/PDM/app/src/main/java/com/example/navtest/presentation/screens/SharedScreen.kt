@@ -23,8 +23,8 @@ import com.example.navtest.ui.components.TopBarGlobal
 
 @Composable
 fun SharedCartScreen(navController: NavController, cartViewModel: CartViewModel) {
-    val sharedCarts by remember { mutableStateOf(cartViewModel.sharedCarts) }
-    val cartItems by remember { mutableStateOf(cartViewModel.cartItems) }
+    val sharedCarts = cartViewModel.sharedCarts
+    val cartItems = cartViewModel.cartItems
 
     Scaffold(
         topBar = {
