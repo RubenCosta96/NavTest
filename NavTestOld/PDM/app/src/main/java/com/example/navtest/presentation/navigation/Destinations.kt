@@ -5,4 +5,6 @@ sealed class Destinations(val route: String) {
     object Register : Destinations("register")
     object Products : Destinations("products")
     object Cart : Destinations("cart")
+    object SharedCarts : Destinations("shared_carts")
+    object SharedCartDetails : Destinations("shared_cart_details/{cartId}")
 }

@@ -17,6 +17,9 @@ class CartViewModel : ViewModel() {
     private val _cartItems = mutableStateListOf<CartProduct>()
     val cartItems: List<CartProduct> get() = _cartItems
 
+    private val _sharedCarts = mutableStateListOf<CartData>()
+    val sharedCarts: List<CartData> get() = _sharedCarts
+
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
@@ -25,8 +28,10 @@ class CartViewModel : ViewModel() {
             val userId = firebaseAuth.currentUser?.uid
             if (userId != null) {
                 loadCart(userId)  // Carregar o carrinho caso o utilizador esteja autenticado
+                loadSharedCarts(userId)
             } else {
                 _cartItems.clear()  // Limpar o carrinho caso o utilizador não esteja autenticado
+                _sharedCarts.clear()
             }
         }
     }
@@ -69,6 +74,84 @@ class CartViewModel : ViewModel() {
                 Log.e("CartViewModel", "Erro ao carregar o carrinho para o utilizador: $userId, Erro: ${e.message}")
             }
     }
+
+    // Função para carregar carrinhos partilhados com o utilizador
+    private fun loadSharedCarts(userId: String) {
+        db.collection("shared_carts")
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                _sharedCarts.clear()
+                querySnapshot.forEach { document ->
+                    val cart = document.toObject(CartData::class.java)
+                    _sharedCarts.add(cart)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("CartViewModel", "Erro ao carregar carrinhos partilhados: ${e.message}")
+            }
+    }
+
+    fun shareCart() {
+        val userId = auth.currentUser?.uid ?: return
+        val cartRef = db.collection("carts").document(userId)
+
+        val updatedCart = CartData(
+            _cartItems.map { CartItemData(it.product.name, it.quantity) },
+            isShared = true
+        )
+
+        if (_sharedCarts.any { it.isShared && it.products == updatedCart.products }) {
+            Log.w("CartViewModel", "Carrinho já partilhado anteriormente.")
+            return
+        }
+
+        cartRef.set(updatedCart)
+            .addOnSuccessListener {
+                Log.d("CartViewModel", "Carrinho partilhado com sucesso!")
+                addSharedCart(updatedCart)
+            }
+            .addOnFailureListener { e ->
+                Log.w("CartViewModel", "Erro ao partilhar carrinho", e)
+            }
+    }
+
+    private fun addSharedCart(cartData: CartData) {
+        val userId = auth.currentUser?.uid ?: return
+        db.collection("shared_carts")
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (querySnapshot.isEmpty) {
+                    val sharedCartRef = db.collection("shared_carts").document()
+                    sharedCartRef.set(cartData.copy(products = cartData.products, isShared = true, sharedByUserId = userId))
+                        .addOnSuccessListener {
+                            Log.d("CartViewModel", "Carrinho adicionado aos carrinhos partilhados!")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("CartViewModel", "Erro ao adicionar carrinho aos carrinhos partilhados", e)
+                        }
+                } else {
+                    // Se já existir um carrinho partilhado, vamos atualizar esse carrinho com os novos produtos
+                    val sharedCartDocument = querySnapshot.documents[0] // Pega o primeiro carrinho encontrado (deveria ser só um)
+
+                    val sharedCartRef = sharedCartDocument.reference
+                    val updatedCartData = cartData.copy(products = cartData.products, isShared = true, sharedByUserId = userId)
+
+                    // Atualiza o carrinho com as novas informações
+                    sharedCartRef.set(updatedCartData)
+                        .addOnSuccessListener {
+                            Log.d("CartViewModel", "Carrinho partilhado atualizado com sucesso!")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("CartViewModel", "Erro ao atualizar o carrinho partilhado", e)
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("CartViewModel", "Erro ao verificar se o carrinho já foi partilhado: ${e.message}")
+            }
+    }
+
+
 
     fun addToCart(product: Product) {
         val existingProduct = _cartItems.find { it.product.name == product.name }

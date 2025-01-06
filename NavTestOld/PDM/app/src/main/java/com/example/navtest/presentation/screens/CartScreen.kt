@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.navtest.domain.model.CartProduct
+import com.example.navtest.presentation.navigation.Destinations
 import com.example.navtest.presentation.viewmodel.CartViewModel
 import com.example.navtest.ui.components.TopBarGlobal
 import com.example.navtest.ui.theme.poppinsFontFamily
@@ -40,7 +41,7 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
                 title = "Carrinho",
                 navController = navController,
                 cartItems = cartItems,
-                showNavigationButton = false
+                showNavigationButton = true
             )
         },
         content = { paddingValues ->
@@ -66,6 +67,30 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
                                 fontFamily = poppinsFontFamily,
                                 modifier = Modifier.padding(16.dp)
                             )
+                        }
+                        item {
+                            Button(
+                                onClick = {
+                                    // Aqui chamamos a função para partilhar o carrinho
+                                    cartViewModel.shareCart()
+                                },
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                Text("Partilhar Carrinho")
+                            }
+                        }
+                        item {
+                            Button(
+                                onClick = {
+                                    // Vai para a tela de carrinhos partilhados
+                                    navController.navigate(Destinations.SharedCarts.route)
+                                },
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Text("Ver Carrinhos Partilhados")
+                            }
                         }
                     }
                 }
