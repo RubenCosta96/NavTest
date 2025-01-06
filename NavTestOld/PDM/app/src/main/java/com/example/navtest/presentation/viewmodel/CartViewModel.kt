@@ -9,8 +9,6 @@ import com.example.navtest.domain.model.CartProduct
 import com.example.navtest.domain.model.Product
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 class CartViewModel : ViewModel() {
 
@@ -116,8 +114,9 @@ class CartViewModel : ViewModel() {
     }
 
     private fun addSharedCart(cartData: CartData) {
-        val userId = auth.currentUser?.uid ?: return
+        val userId = auth.currentUser?.uid ?: return  // Verifica se o utilizador está autenticado
         db.collection("shared_carts")
+            .whereEqualTo("sharedByUserId", userId)  // Filtra os carrinhos partilhados pelo utilizador atual
             .get()
             .addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.isEmpty) {
@@ -130,13 +129,11 @@ class CartViewModel : ViewModel() {
                             Log.e("CartViewModel", "Erro ao adicionar carrinho aos carrinhos partilhados", e)
                         }
                 } else {
-                    // Se já existir um carrinho partilhado, vamos atualizar esse carrinho com os novos produtos
-                    val sharedCartDocument = querySnapshot.documents[0] // Pega o primeiro carrinho encontrado (deveria ser só um)
+                    val sharedCartDocument = querySnapshot.documents[0] // Obtem o primeiro carrinho partilhado do utilizador
 
                     val sharedCartRef = sharedCartDocument.reference
                     val updatedCartData = cartData.copy(products = cartData.products, isShared = true, sharedByUserId = userId)
 
-                    // Atualiza o carrinho com as novas informações
                     sharedCartRef.set(updatedCartData)
                         .addOnSuccessListener {
                             Log.d("CartViewModel", "Carrinho partilhado atualizado com sucesso!")
@@ -150,8 +147,6 @@ class CartViewModel : ViewModel() {
                 Log.e("CartViewModel", "Erro ao verificar se o carrinho já foi partilhado: ${e.message}")
             }
     }
-
-
 
     fun addToCart(product: Product) {
         val existingProduct = _cartItems.find { it.product.name == product.name }

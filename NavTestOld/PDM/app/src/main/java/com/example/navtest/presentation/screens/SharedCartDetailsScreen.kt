@@ -50,8 +50,8 @@ fun SharedCartDetailsScreen(cartId: String, navController: NavController, cartVi
 
                 val productNames = cartData?.products?.map { it.productId } ?: emptyList()  // Mudei para buscar pelos nomes
                 productNames.forEach { productName ->
-                    db.collection("product")  // Atualiza para a coleção "product"
-                        .whereEqualTo("name", productName)  // Buscando pelo nome do produto
+                    db.collection("product")
+                        .whereEqualTo("name", productName)
                         .get()
                         .addOnSuccessListener { productQuerySnapshot ->
                             if (!productQuerySnapshot.isEmpty) {
