@@ -24,7 +24,6 @@ class MainActivity : ComponentActivity() {
         auth = Firebase.auth
         FirebaseApp.initializeApp(this)
 
-
         db = FirebaseFirestore.getInstance()
         val currentUser = auth.currentUser
 

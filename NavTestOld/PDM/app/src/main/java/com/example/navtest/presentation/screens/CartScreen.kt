@@ -6,73 +6,72 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.Button
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.navtest.presentation.viewmodel.CartViewModel
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.navtest.domain.model.CartProduct
-import com.example.navtest.domain.model.Product
+import com.example.navtest.presentation.viewmodel.CartViewModel
+import com.example.navtest.ui.components.TopBarGlobal
+import com.example.navtest.ui.theme.poppinsFontFamily
 
 
 @Composable
 fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
-    val cartItems by remember { mutableStateOf(cartViewModel.cartItems)}
+    val cartItems by remember { mutableStateOf(cartViewModel.cartItems) }
     val total = cartViewModel.calculateTotal()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Carrinho",
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        if (cartItems.isEmpty()) {
-            Text("O carrinho está vazio.")
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
+    Scaffold(
+        topBar = {
+            TopBarGlobal(
+                title = "Carrinho",
+                navController = navController,
+                cartItems = cartItems,
+                showNavigationButton = false
+            )
+        },
+        content = { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp)
             ) {
-                items(cartItems) { product ->
-                    CartItem(product, cartViewModel)
-                }
-                item {
-                    Text(
-                        text = "Total: ${"%.2f".format(total)} €",
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-                item {
-                    Button(
-                        onClick = { navController.popBackStack() },
-                        modifier = Modifier
-                            .padding(top = 8.dp)
-                            .align(Alignment.CenterHorizontally)
+                if (cartItems.isEmpty()) {
+                    Text("O carrinho está vazio.")
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
                     ) {
-                        Text("Voltar")
+                        items(cartItems) { product ->
+                            CartItem(product, cartViewModel)
+                        }
+                        item {
+                            Text(
+                                text = "Total: ${"%.2f".format(total)} €",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontFamily = poppinsFontFamily,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
                     }
                 }
             }
         }
-    }
+    )
 }
 
 @Composable
@@ -101,11 +100,13 @@ fun CartItem(cartProduct: CartProduct, cartViewModel: CartViewModel) {
             )
             Text(
                 text = "Preço: ${cartProduct.product.price} €",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                fontFamily = poppinsFontFamily,
             )
             Text(
                 text = "Quantidade: ${cartProduct.quantity}",
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall,
+                fontFamily = poppinsFontFamily,
             )
         }
 

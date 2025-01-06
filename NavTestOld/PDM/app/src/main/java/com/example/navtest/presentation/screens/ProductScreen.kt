@@ -53,10 +53,10 @@ import com.example.navtest.domain.model.Product
 import com.example.navtest.presentation.navigation.Destinations
 import com.example.navtest.presentation.viewmodel.CartViewModel
 import com.example.navtest.presentation.viewmodel.ProductViewModel
+import com.example.navtest.ui.components.TopBarGlobal
 import com.example.navtest.ui.theme.poppinsFontFamily
 import com.google.firebase.auth.FirebaseAuth
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductScreen(
     navController: NavController,
@@ -72,42 +72,11 @@ fun ProductScreen(
 
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = { Text(text = "Produtos", style = MaterialTheme.typography.titleLarge) },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    actions = {
-                        IconButton(onClick = {
-                            navController.navigate(Destinations.Cart.route)
-                        }) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                BadgedBox(
-                                    modifier = Modifier.padding(end = 8.dp, top = 8.dp),
-                                    badge = {
-                                        val itemCount = cartItems.sumOf { it.quantity }
-                                        if (itemCount > 0) {
-                                            Badge(
-                                                containerColor = MaterialTheme.colorScheme.error,
-                                                contentColor = MaterialTheme.colorScheme.onError,
-                                                modifier = Modifier.offset(x =(-1).dp)
-                                            ) {
-                                                Text(text = itemCount.toString(), style = MaterialTheme.typography.labelSmall)
-                                            }
-                                        }
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.ShoppingCart,
-                                        contentDescription = "Carrinho",
-                                        modifier = Modifier.size(26.dp),
-                                        tint = MaterialTheme.colorScheme.onPrimary
-                                    )
-                                }
-                            }
-                        }
-                    }
+                TopBarGlobal(
+                    title = "Produtos",
+                    navController = navController,
+                    cartItems = cartItems,
+                    showNavigationButton = true
                 )
             },
             content = { paddingValues ->
@@ -152,6 +121,7 @@ fun ProductScreen(
         )
     }
 }
+
 
 @Composable
 fun ProductItem(product: Product, cartViewModel: CartViewModel) {
