@@ -93,7 +93,6 @@ fun RegisterScreen(navController: NavController) {
             Text("Criar Conta")
         }
 
-        // Navegação para a tela de Login
         Button(
             onClick = { navController.navigate("login") },
             modifier = Modifier.padding(top = 8.dp)

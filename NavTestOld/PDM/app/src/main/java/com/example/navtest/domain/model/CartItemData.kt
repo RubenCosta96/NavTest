@@ -1,8 +1,8 @@
 package com.example.navtest.domain.model
 
 data class CartItemData(
-    val productId: String,  // ID do produto
-    val quantity: Int       // Quantidade do produto no carrinho
+    val productId: String,
+    val quantity: Int
 ){
     constructor() : this("", 0)
 }

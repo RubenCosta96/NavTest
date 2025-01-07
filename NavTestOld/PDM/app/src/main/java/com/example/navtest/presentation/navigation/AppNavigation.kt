@@ -24,7 +24,6 @@ fun AppNavigation(startDestination: String, cartViewModel: CartViewModel = viewM
         composable(Destinations.Cart.route) { CartScreen(navController, cartViewModel) }
         composable(Destinations.SharedCarts.route) { SharedCartScreen(navController, cartViewModel) }
         composable(Destinations.SharedCartDetails.route) { backStackEntry ->
-            // O parâmetro cartId é extraído da navegação
             val cartId = backStackEntry.arguments?.getString("cartId")
             if (cartId != null) {
                 SharedCartDetailsScreen(cartId = cartId, navController = navController, cartViewModel = cartViewModel)

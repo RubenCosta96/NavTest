@@ -71,7 +71,6 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
                         item {
                             Button(
                                 onClick = {
-                                    // Aqui chamamos a função para partilhar o carrinho
                                     cartViewModel.shareCart()
                                 },
                                 modifier = Modifier
@@ -84,7 +83,6 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
                         item {
                             Button(
                                 onClick = {
-                                    // Vai para a tela de carrinhos partilhados
                                     navController.navigate(Destinations.SharedCarts.route)
                                 },
                                 modifier = Modifier.padding(16.dp)

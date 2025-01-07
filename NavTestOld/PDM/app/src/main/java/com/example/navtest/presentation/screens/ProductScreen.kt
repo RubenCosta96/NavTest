@@ -131,7 +131,7 @@ fun ProductItem(product: Product, cartViewModel: CartViewModel) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { /* Placeholder para futuras ações */ },
+            .clickable {  },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface

@@ -37,7 +37,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 @Composable
 fun SharedCartDetailsScreen(cartId: String, navController: NavController, cartViewModel: CartViewModel) {
     val cart = remember { mutableStateOf<CartData?>(null) }
-    val productsDetails = remember { mutableStateOf<Map<String, Product>>(emptyMap()) } // Para armazenar os produtos carregados
+    val productsDetails = remember { mutableStateOf<Map<String, Product>>(emptyMap()) }
 
     LaunchedEffect(cartId) {
         val db = FirebaseFirestore.getInstance()
@@ -57,7 +57,7 @@ fun SharedCartDetailsScreen(cartId: String, navController: NavController, cartVi
                             if (!productQuerySnapshot.isEmpty) {
                                 val product = productQuerySnapshot.documents[0].toObject(Product::class.java)
                                 product?.let {
-                                    productsDetails.value += (productName to it)
+                                    productsDetails.value = productsDetails.value + (productName to it)
                                 }
                             }
                         }

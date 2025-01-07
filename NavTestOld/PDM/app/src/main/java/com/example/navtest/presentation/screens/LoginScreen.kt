@@ -57,7 +57,6 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel = v
             visualTransformation = PasswordVisualTransformation()
         )
 
-        // Botão de Login
         Button(onClick = { loginViewModel.loginUser(::onLoginResult)
 
         }) {
